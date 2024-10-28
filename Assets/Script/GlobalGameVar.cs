@@ -40,7 +40,7 @@ public class GlobalGameVar
 {
     private static GlobalGameVar instance;
     public float blockWidth {get; private set;}
-    public int money {get; private set;}
+    public int money {get; private set;} = 50;
     public Dictionary<Element, ElementInfo> elementDic {get; private set;}
     public Dictionary<string, CurePotionClass> curePotionDic {get; private set;}
     private GlobalGameVar() {}
@@ -71,5 +71,8 @@ public class GlobalGameVar
                 return true;
             }
         return false;
+    }
+    public void ChangeMoney(int amount) {
+        money = amount;
     }
 }

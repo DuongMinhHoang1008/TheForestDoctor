@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Item",menuName ="New Item")]
-public abstract class ItemClass :ScriptableObject
+public abstract class ItemClass : ScriptableObject
 {
     public string ItemName;
     public Sprite itemIcon;

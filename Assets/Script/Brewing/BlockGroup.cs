@@ -8,6 +8,7 @@ public class BlockGroup : MonoBehaviour
     [SerializeField] public Block[] blockArr;
     [SerializeField] Element element;
     Camera mainCamera;
+    bool isFollow = true;
     // Start is called before the first frame update
     private void Awake() {
         
@@ -25,14 +26,16 @@ public class BlockGroup : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 screenPos = mainCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10));
-        transform.position = screenPos;
-        if (Input.GetMouseButtonDown(0)) {
-            if (IsPlacable()) {
-                foreach (Block block in blockArr) {
-                    block.Place();
-                }  
-                Destroy(gameObject);
+        if (isFollow) {
+            Vector3 screenPos = mainCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10));
+            transform.position = screenPos;
+            if (Input.GetMouseButtonDown(0)) {
+                if (IsPlacable()) {
+                    foreach (Block block in blockArr) {
+                        block.Place();
+                    }  
+                    Destroy(gameObject);
+                }
             }
         }
     }
@@ -60,5 +63,8 @@ public class BlockGroup : MonoBehaviour
     }
     public void SetElement(Element el) {
         element = el;
+    }
+    public void SetUnFollow() {
+        isFollow = false;
     }
 }

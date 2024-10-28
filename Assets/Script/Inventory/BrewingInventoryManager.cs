@@ -17,7 +17,6 @@ public class BrewingInventoryManager : MonoBehaviour
     [SerializeField] private SlotClass originalSlot;
     [SerializeField] private SlotClass tempSlot;
     [SerializeField] Board brewingBoard;
-    [SerializeField] GameObject itemInfo;
     GameObject ingredientShape;
     public Image itemCursor;
     SlotClass[] tempItems;
@@ -91,6 +90,9 @@ public class BrewingInventoryManager : MonoBehaviour
                     slots[i].transform.GetChild(0).GetComponent<Image>().enabled = true;
                     slots[i].transform.GetChild(0).GetComponent<Image>().sprite = herb[i].GetItem().itemIcon;
                     slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = herb[i].GetQuantity() + "";
+                    if (slots[i].GetComponent<ItemBox>() != null) {
+                    slots[i].GetComponent<ItemBox>().SetItem(herb[i].GetItem());
+                }
                 }
                 catch
                 {
@@ -110,6 +112,9 @@ public class BrewingInventoryManager : MonoBehaviour
                 slots[i].transform.GetChild(0).GetComponent<Image>().enabled = true;
                 slots[i].transform.GetChild(0).GetComponent<Image>().sprite = potion[i].GetItem().itemIcon;
                 slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = potion[i].GetQuantity() + "";
+                if (slots[i].GetComponent<ItemBox>() != null) {
+                    slots[i].GetComponent<ItemBox>().SetItem(potion[i].GetItem());
+                }
             }
             catch
             {
@@ -216,7 +221,6 @@ public class BrewingInventoryManager : MonoBehaviour
         SlotClass currentSlot = GetCloseSlot();
         if(currentSlot == null || currentSlot.GetItem() == null)
         {
-            CloseItemInfo();
             return;
         }
         HerbClass herbClass = currentSlot.GetItem().GetHerb();
@@ -227,8 +231,6 @@ public class BrewingInventoryManager : MonoBehaviour
             RefreshUI();
             ingredientShape = Instantiate(herbClass.GetIngredientShape(), Vector3.zero, Quaternion.identity);
             ingredientShape.GetComponent<BlockGroup>().SetElement(herbClass.GetElement());
-        } else if (currentSlot.GetItem() is CurePotionClass) {
-            ShowItemInfo((CurePotionClass) currentSlot.GetItem());
         }
         return;
     }  
@@ -245,14 +247,7 @@ public class BrewingInventoryManager : MonoBehaviour
     public void CopyInventoryToTemp() {
         CopyInventory(herb, ref tempItems);
     }
-    void ShowItemInfo(CurePotionClass curePotion) {
-        itemInfo.active = true;
-        itemInfo.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = curePotion.GetPotionName();
-        itemInfo.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = curePotion.GetInfoPotion();
-    }
-    void CloseItemInfo() {
-        itemInfo.active = false;
-    }
+
     public bool CheckIfPotionIsFull() {
         for(int i = 0; i < potion.Length; i++)
         {

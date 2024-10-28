@@ -10,7 +10,7 @@ public class HerbClass : ItemClass
     public string itemDescription;
     [SerializeField] protected Element element;
     [SerializeField] protected GameObject ingredientShape;
-    [SerializeField] int level;
+    [SerializeField] public int level;
     
     public override ItemClass GetItems(SlotClass slotClass) { return this; }
     public override PotionClass GetPotion() { return null; }
