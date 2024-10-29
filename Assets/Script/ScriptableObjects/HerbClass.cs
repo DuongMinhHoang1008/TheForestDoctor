@@ -18,7 +18,27 @@ public class HerbClass : ItemClass
     public Element GetElement() { return element; }
     public GameObject GetIngredientShape() { return ingredientShape; }
     public override string GetDescription() { 
-        string info = "Nguyên tố: ";
+        string info = "Nguyên tố:\n";
+        switch(element) {
+            case Element.Yellow:
+                info += "Vàng";
+                break;
+            case Element.Orange:
+                info += "cam";
+                break;
+            case Element.Red:
+                info += "Đỏ";
+                break;
+            case Element.Purple:
+                info += "Tím";
+                break;
+            case Element.Blue:
+                info += "Xanh dương";
+                break;
+            case Element.Green:
+                info += "Xanh lục";
+                break;
+        }
         info += "\nCấp độ: " + level;
         return info;
     }

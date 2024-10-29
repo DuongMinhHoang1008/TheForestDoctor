@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d14734560d8780747ab6e6748416dd21, type: 3}
-  m_Name: New Sickness
+  m_Name: OrangeLess
   m_EditorClassIdentifier: 
-  sicknessName: Unknown
-  level: 2
-  yellow: 2
-  orange: 0
+  sicknessName: OrangeLess
+  level: 1
+  yellow: 0
+  orange: 2
   red: 0
   purple: 0
   blue: 0

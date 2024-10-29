@@ -355,6 +355,7 @@ MonoBehaviour:
   herb: {fileID: 0}
   image: {fileID: 8479464870241333448}
   inputField: {fileID: 8211005215484721926}
+  showPrice: {fileID: 4655142860171092678}
 --- !u!1 &3997594538253785891
 GameObject:
   m_ObjectHideFlags: 0
@@ -1024,7 +1025,7 @@ GameObject:
   - component: {fileID: 8904420429971527631}
   - component: {fileID: 4655142860171092678}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Price
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

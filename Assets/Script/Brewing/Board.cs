@@ -69,6 +69,7 @@ public class Board : MonoBehaviour
                 curePotionClass.SetElementValue(Element.Blue, elementNumber[Element.Blue]);
                 curePotionClass.SetElementValue(Element.Green, elementNumber[Element.Green]);
                 curePotionClass.SetSprite(curePotionIcon);
+                curePotionClass.SetName(name);
                 SaveToDic(curePotionClass, name);
             } else {
                 curePotionClass = LoadFromDic(name);

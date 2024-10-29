@@ -3,24 +3,37 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Shop : MonoBehaviour
 {
     [SerializeField] public int maxNumber = 6;
     [SerializeField] TextMeshProUGUI showNumber;
     [SerializeField] GameObject ingredients;
+    [SerializeField] TextMeshProUGUI showSumMoney;
+    [SerializeField] Slider shippingProgress;
     List<GameObject> ingredientsList;
     public int currentNumber {get; private set;} = 0;
     int currentMoney = 0;
     public static Shop instance { get; private set; }
+    Dictionary<HerbClass, int> ingredientNum;
+
+    float maxShipTime;
+    float currentShipTime;
+    public bool isShipping { get; private set; }
+
     private void Awake() {
         if (instance == null) {
             instance = this;
+            ingredientsList = new List<GameObject>();
+            for (int i = 0; i < ingredients.transform.childCount; i++) {
+                ingredientsList.Add(ingredients.transform.GetChild(i).gameObject);
+            }
+            ingredientNum = new Dictionary<HerbClass, int>();
+            foreach (GameObject ingre in ingredientsList) {
+                ingredientNum.Add(ingre.GetComponent<GridSlot>().herb, 0);
+            }
         } 
-        ingredientsList = new List<GameObject>();
-        for (int i = 0; i < ingredients.transform.childCount; i++) {
-            ingredientsList.Add(ingredients.transform.GetChild(i).gameObject);
-        }
     }
     // Start is called before the first frame update
     void Start()
@@ -31,16 +44,26 @@ public class Shop : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        showNumber.text = currentNumber.ToString() + " / " + maxNumber.ToString();
+        showSumMoney.text = currentMoney.ToString();
+        if (isShipping) {
+            currentShipTime += Time.deltaTime;
+            if (currentShipTime < maxShipTime / 2) {
+                shippingProgress.value = currentShipTime / (maxShipTime / 2);
+            } else if (currentShipTime >= maxShipTime / 2 && currentShipTime < maxShipTime) {
+                shippingProgress.value = (maxShipTime - currentShipTime) / (maxShipTime / 2);
+            } else if (currentShipTime >= maxShipTime) {
+                GetIngredients();
+                isShipping = false;
+            }
+        }
     }
 
     public void AddNumber(int num) {
-        Debug.Log(num + " " + currentNumber);
         currentNumber += num;
         if (currentNumber > maxNumber) currentNumber = maxNumber;
         if (currentNumber < 0) currentNumber = 0;
         showNumber.text = currentNumber.ToString() + " / " + maxNumber.ToString();
-       
     }
     public void SummarizeNumber() {
         currentNumber = 0;
@@ -48,6 +71,7 @@ public class Shop : MonoBehaviour
         foreach (GameObject g in ingredientsList) {
             currentNumber += int.Parse(g.GetComponent<GridSlot>().inputField.text);
             currentMoney += g.GetComponent<GridSlot>().herb.level * 10 * int.Parse(g.GetComponent<GridSlot>().inputField.text);
+            ingredientNum[g.GetComponent<GridSlot>().herb] = int.Parse(g.GetComponent<GridSlot>().inputField.text);
         }
         showNumber.text = currentNumber.ToString() + " / " + maxNumber.ToString();
     }
@@ -55,8 +79,9 @@ public class Shop : MonoBehaviour
         return currentNumber <= maxNumber && currentNumber >= 0;
     }
     public void ShipIngredients() {
-        if (GlobalGameVar.Instance().money >= currentMoney) {
-            Invoke("GetIngredients", 3);
+        if (GlobalGameVar.Instance().money >= currentMoney && !isShipping) {
+            float shipTime = 30 * Mathf.Pow(0.75f, GlobalGameVar.Instance().upgradeDic[Upgrade.Speed]);
+            StartShipping(shipTime);
             GlobalGameVar.Instance().ChangeMoney(GlobalGameVar.Instance().money - currentMoney);
         }
     }
@@ -73,4 +98,19 @@ public class Shop : MonoBehaviour
         }
         currentMoney = 0;
     }
+    public void RefreshShop() {
+        showNumber.text = currentNumber.ToString() + " / " + maxNumber.ToString();
+        foreach (GameObject g in ingredientsList) {
+            g.GetComponent<GridSlot>().inputField.text = ingredientNum[g.GetComponent<GridSlot>().herb].ToString();
+        }
+    }
+    public void IncreaseMaxShipNumber() {
+        maxNumber = (int) (5 * Mathf.Pow(1.5f, GlobalGameVar.Instance().upgradeDic[Upgrade.Number]));
+    }
+    void StartShipping(float shipTime) {
+        maxShipTime = shipTime;
+        isShipping = true;
+        currentShipTime = 0;
+    }
+    
 }

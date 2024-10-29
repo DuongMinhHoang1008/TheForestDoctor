@@ -6,7 +6,7 @@ using UnityEngine;
 public class SicknessClass : ScriptableObject
 {
     [SerializeField] string sicknessName;
-    [SerializeField] int level;
+    [SerializeField] public int level;
     [SerializeField] int yellow;
     [SerializeField] int orange;
     [SerializeField] int red;

@@ -24,6 +24,8 @@ public class BrewingInventoryManager : MonoBehaviour
     public bool isMoving;
     bool isShowingIngredient = true;
     bool isBrewing = false;
+
+    public bool isSellingPotion { get; private set; } = false;
     public static BrewingInventoryManager instance {get; private set;}
     //[SerializeField] private List<SlotClass> items = new List<SlotClass>();
     private void Start()
@@ -68,6 +70,8 @@ public class BrewingInventoryManager : MonoBehaviour
                 GetItemToBrew();
             }
             
+        } else if (Input.GetMouseButtonDown(0) && isSellingPotion) {
+            SellPotion();
         }
         if (isMoving)
         {
@@ -91,14 +95,15 @@ public class BrewingInventoryManager : MonoBehaviour
                     slots[i].transform.GetChild(0).GetComponent<Image>().sprite = herb[i].GetItem().itemIcon;
                     slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = herb[i].GetQuantity() + "";
                     if (slots[i].GetComponent<ItemBox>() != null) {
-                    slots[i].GetComponent<ItemBox>().SetItem(herb[i].GetItem());
-                }
+                        slots[i].GetComponent<ItemBox>().SetItem(herb[i].GetItem());
+                    }
                 }
                 catch
                 {
                     slots[i].transform.GetChild(0).GetComponent<Image>().sprite = null;
                     slots[i].transform.GetChild(0).GetComponent<Image>().enabled = false;
                     slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "";
+                    slots[i].GetComponent<ItemBox>().SetItem(null);
                 }
             }
     }
@@ -121,6 +126,7 @@ public class BrewingInventoryManager : MonoBehaviour
                 slots[i].transform.GetChild(0).GetComponent<Image>().sprite = null;
                 slots[i].transform.GetChild(0).GetComponent<Image>().enabled = false;
                 slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "";
+                slots[i].GetComponent<ItemBox>().SetItem(null);
             }
         }
     }
@@ -261,14 +267,50 @@ public class BrewingInventoryManager : MonoBehaviour
     public void SetIsBrewing(bool b) {
         isBrewing = b;
     }
-    public bool ContainPotionCanCure(SicknessClass sickness) {
+    public CurePotionClass ContainPotionCanCure(SicknessClass sickness) {
         foreach(SlotClass slot in potion)
         {
             if(slot != null && slot.GetItem() is CurePotionClass && sickness.CheckIfRightPotion((CurePotionClass)slot.GetItem()))
             {
-                return true;
+                return (CurePotionClass) slot.GetItem();
             }
         }
-        return false;
+        return null;
+    }
+    public void GetPotion(CurePotionClass cure) {
+        foreach(SlotClass slot in potion)
+        {
+            if(
+                slot != null 
+                && slot.GetItem() == cure)
+            {
+                slot.SubQuantity(1);
+                if (slot.GetQuantity() == 0) {
+                    slot.RemoveItem();
+                }
+                if (!isShowingIngredient) RefreshPotion();
+                break;
+            }
+        }
+    }
+    public void SetIsSellingPotion(bool b) {
+        isSellingPotion = b;
+    }
+    void SellPotion() {
+        SlotClass currentSlot = GetCloseSlot();
+        if(currentSlot == null || currentSlot.GetItem() == null)
+        {
+            return;
+        }
+        if (currentSlot.GetItem() is CurePotionClass) {
+            CurePotionClass pot = (CurePotionClass) currentSlot.GetItem();
+            currentSlot.SubQuantity(1);
+            if (currentSlot.GetQuantity() == 0) {
+                currentSlot.RemoveItem();
+            }
+            GlobalGameVar.Instance().ChangeMoney(GlobalGameVar.Instance().money + pot.GetPotionValue());
+            RefreshUI();
+        }
+        return;
     }
 }

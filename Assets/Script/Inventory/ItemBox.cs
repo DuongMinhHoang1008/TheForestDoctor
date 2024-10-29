@@ -6,7 +6,7 @@ using UnityEngine;
 public class ItemBox : MonoBehaviour
 {
     [SerializeField] GameObject descriptionBox;
-    ItemClass item;
+    [SerializeField] ItemClass item;
     GameObject oldShape;
     // Start is called before the first frame update
     void Start()
@@ -31,6 +31,11 @@ public class ItemBox : MonoBehaviour
                 shape.GetComponent<BlockGroup>().SetUnFollow();
                 shape.GetComponent<BlockGroup>().SetElement(((HerbClass) item).GetElement());
                 oldShape = shape;
+            }
+        } else {
+            descriptionBox.SetActive(false);
+            if (oldShape != null) {
+                Destroy(oldShape);
             }
         }
     }

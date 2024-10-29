@@ -7,6 +7,8 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance { get; private set;}
     [SerializeField] TextMeshProUGUI showMoney;
+    [SerializeField] SicknessClass[] sicknesses;
+    [SerializeField] GameObject patientList;
     private void Awake() {
         if (instance == null) {
             instance = this;
@@ -22,5 +24,11 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         showMoney.text = GlobalGameVar.Instance().money.ToString();
+    }
+    public SicknessClass[] GetSicknesses() {
+        return sicknesses;
+    }
+    public void SetBedActive(int number) {
+        patientList.transform.GetChild(number - 1).gameObject.SetActive(true);
     }
 }

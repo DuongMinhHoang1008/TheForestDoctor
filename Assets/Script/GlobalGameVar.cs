@@ -19,6 +19,12 @@ public enum Element {
     Blue,
     Green
 }
+public enum Upgrade {
+    Number,
+    Speed,
+    Bed,
+    Money
+}
 
 
 public class ElementInfo {
@@ -43,6 +49,8 @@ public class GlobalGameVar
     public int money {get; private set;} = 50;
     public Dictionary<Element, ElementInfo> elementDic {get; private set;}
     public Dictionary<string, CurePotionClass> curePotionDic {get; private set;}
+    public Dictionary<Upgrade, int> upgradeDic {get; private set;}
+    public Dictionary<Upgrade, int> maxUpgradeDic {get; private set;}
     private GlobalGameVar() {}
     public static GlobalGameVar Instance() {
         if (instance == null) {
@@ -58,6 +66,20 @@ public class GlobalGameVar
                     { Element.Purple, new ElementInfo(new Color(0.5f, 0, 0.5f), Element.Blue, Element.Green, Element.Yellow) },
                     { Element.Blue, new ElementInfo(Color.blue, Element.Green, Element.Yellow, Element.Orange) },
                     { Element.Green, new ElementInfo(Color.green, Element.Yellow, Element.Orange, Element.Red) },
+                },
+                upgradeDic = new Dictionary<Upgrade, int>()
+                {
+                    { Upgrade.Number, 0 },
+                    { Upgrade.Speed, 0 },
+                    { Upgrade.Bed, 1 },
+                    { Upgrade.Money, 0 }
+                },
+                maxUpgradeDic = new Dictionary<Upgrade, int>()
+                {
+                    { Upgrade.Number, 5 },
+                    { Upgrade.Speed, 5 },
+                    { Upgrade.Bed, 5 },
+                    { Upgrade.Money, 5 }
                 }
             };
         }
@@ -73,6 +95,15 @@ public class GlobalGameVar
         return false;
     }
     public void ChangeMoney(int amount) {
-        money = amount;
+        if (amount > money) {
+            money += (amount - money) * (int) System.Math.Pow(1.2f, upgradeDic[Upgrade.Money]);
+        } else {
+            money = amount;
+        }
+    }
+    public void UpgradeOne(Upgrade upgrade) {
+        if (upgradeDic[upgrade] < maxUpgradeDic[upgrade]) {
+            upgradeDic[upgrade]++;
+        }
     }
 }

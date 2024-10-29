@@ -22,11 +22,30 @@ public class CurePotionClass : ItemClass
         return ItemName;
     }
     virtual public string GetInfoPotion() {
-        string info = "";
+        string info = "Thuốc"
+                        + "\nVàng: " + elementValue[Element.Yellow]
+                        + "\nCam: " + elementValue[Element.Orange]
+                        + "\nĐỏ: " + elementValue[Element.Red]
+                        + "\nTím: " + elementValue[Element.Purple]
+                        + "\nXanh dương: " + elementValue[Element.Blue]
+                        + "\nxanh lục: " + elementValue[Element.Green];
+        info += "\nGiá bán: " + GetPotionValue();
         return info;
     }
     public override string GetDescription()
     {
         return GetInfoPotion();
+    }
+    public void SetName(string str) {
+        ItemName = str;
+    }
+    public int GetPotionValue() {
+        int countDiff = 0;
+        int sumVal = 0;
+        foreach (Element el in elementValue.Keys) {
+            if (elementValue[el] > 0) countDiff++;
+            sumVal += elementValue[el];
+        }
+        return sumVal * countDiff * 10;
     }
 }
