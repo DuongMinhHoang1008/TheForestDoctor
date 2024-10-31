@@ -88,7 +88,7 @@ public class Patient : MonoBehaviour
         PlayAnimationIn();
         sickness = GameManager.instance.GetRandomSickness();
         textMesh.text = sickness.GetDescription();
-        maxTime = sickness.level * minTime;
+        maxTime = minTime * Mathf.Pow(3, sickness.level - 1);
         currentTime = maxTime + 4f;
     }
 

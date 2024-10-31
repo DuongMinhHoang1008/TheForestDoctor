@@ -31,7 +31,14 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (showMoney != null) showMoney.text = GlobalGameVar.Instance().money.ToString();
+        if (showMoney != null) {
+            int zeroNum = Mathf.FloorToInt(Mathf.Log10(GlobalGameVar.Instance().money)) + 1;
+            showMoney.text = "";
+            for (int i = 0; i < 5 - zeroNum; i++) {
+                showMoney.text += "0";
+            }
+            showMoney.text += GlobalGameVar.Instance().money.ToString();
+        }
     }
     public SicknessClass[] GetSicknesses() {
         return sicknesses;
