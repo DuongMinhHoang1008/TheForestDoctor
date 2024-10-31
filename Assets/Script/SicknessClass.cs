@@ -5,7 +5,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Sickness", menuName = "Sickness")]
 public class SicknessClass : ScriptableObject
 {
-    [SerializeField] string sicknessName;
     [SerializeField] public int level;
     [SerializeField] int yellow;
     [SerializeField] int orange;
@@ -25,14 +24,13 @@ public class SicknessClass : ScriptableObject
     }
 
     public string GetDescription() {
-        string str = sicknessName + "\n"
-                    + "Level:  " + level + "\n"
-                    + "Yellow: " + yellow + "\n"
-                    + "Orange: " + orange + "\n"
-                    + "Red:    " + red + "\n"
-                    + "Purple: " + purple + "\n"
-                    + "Blue:   " + blue + "\n"
-                    + "Green:  " + green;
+        string str = "Cấp độ: " + level + "\n"
+                    + "Vàng: " + yellow + "\n"
+                    + "Cam: " + orange + "\n"
+                    + "Đỏ: " + red + "\n"
+                    + "Tím: " + purple + "\n"
+                    + "Xanh dương: " + blue + "\n"
+                    + "Xanh lục: " + green;
         return str;
     }
 }

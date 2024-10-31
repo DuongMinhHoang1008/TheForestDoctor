@@ -22,14 +22,14 @@ public class CurePotionClass : ItemClass
         return ItemName;
     }
     virtual public string GetInfoPotion() {
-        string info = "Thuốc"
-                        + "\nVàng: " + elementValue[Element.Yellow]
-                        + "\nCam: " + elementValue[Element.Orange]
-                        + "\nĐỏ: " + elementValue[Element.Red]
-                        + "\nTím: " + elementValue[Element.Purple]
-                        + "\nXanh dương: " + elementValue[Element.Blue]
-                        + "\nxanh lục: " + elementValue[Element.Green];
-        info += "\nGiá bán: " + GetPotionValue();
+        string info = "Thuốc\n"
+                        + "\nV: " + elementValue[Element.Yellow]
+                        + " C: " + elementValue[Element.Orange]
+                        + "\nĐ: " + elementValue[Element.Red]
+                        + " T: " + elementValue[Element.Purple]
+                        + "\nXd: " + elementValue[Element.Blue]
+                        + " Xl: " + elementValue[Element.Green];
+        info += "\n\nGiá bán: " + GetPotionValue();
         return info;
     }
     public override string GetDescription()
@@ -46,6 +46,6 @@ public class CurePotionClass : ItemClass
             if (elementValue[el] > 0) countDiff++;
             sumVal += elementValue[el];
         }
-        return sumVal * countDiff * 10;
+        return (int) (sumVal * (int) Mathf.Pow(3, countDiff - 1) * 10 * Mathf.Pow(1.2f, GlobalGameVar.Instance().upgradeDic[Upgrade.Money]));
     }
 }

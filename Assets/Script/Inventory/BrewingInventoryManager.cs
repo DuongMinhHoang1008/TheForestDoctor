@@ -89,21 +89,31 @@ public class BrewingInventoryManager : MonoBehaviour
     {
             for (int i = 0; i < slots.Length; i++)
             {
-                try
+                if (i < herb.Length && herb[i].GetItem() != null)
                 {
-                    slots[i].transform.GetChild(0).GetComponent<Image>().enabled = true;
-                    slots[i].transform.GetChild(0).GetComponent<Image>().sprite = herb[i].GetItem().itemIcon;
-                    slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = herb[i].GetQuantity() + "";
+                    if (slots[i].transform.GetChild(0).GetComponent<Image>() != null) {
+                        slots[i].transform.GetChild(0).GetComponent<Image>().enabled = true;
+                        slots[i].transform.GetChild(0).GetComponent<Image>().sprite = herb[i].GetItem().itemIcon;
+                    }
+                    if (slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>() != null) {
+                        slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = herb[i].GetQuantity() + "";
+                    }
                     if (slots[i].GetComponent<ItemBox>() != null) {
                         slots[i].GetComponent<ItemBox>().SetItem(herb[i].GetItem());
                     }
                 }
-                catch
+                else
                 {
-                    slots[i].transform.GetChild(0).GetComponent<Image>().sprite = null;
-                    slots[i].transform.GetChild(0).GetComponent<Image>().enabled = false;
-                    slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "";
-                    slots[i].GetComponent<ItemBox>().SetItem(null);
+                    if (slots[i].transform.GetChild(0).GetComponent<Image>() != null) {
+                        slots[i].transform.GetChild(0).GetComponent<Image>().sprite = null;
+                        slots[i].transform.GetChild(0).GetComponent<Image>().enabled = false;
+                    }
+                    if (slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>() != null) {
+                        slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "";
+                    }
+                    if (slots[i].GetComponent<ItemBox>() != null) {
+                        slots[i].GetComponent<ItemBox>().SetItem(null);
+                    }
                 }
             }
     }
@@ -112,21 +122,34 @@ public class BrewingInventoryManager : MonoBehaviour
         
         for (int i = 0; i < slots.Length; i++)
         {
-            try
+            if (potion[i].GetItem() != null)
             {
-                slots[i].transform.GetChild(0).GetComponent<Image>().enabled = true;
-                slots[i].transform.GetChild(0).GetComponent<Image>().sprite = potion[i].GetItem().itemIcon;
-                slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = potion[i].GetQuantity() + "";
+                if (slots[i].transform.GetChild(0).GetComponent<Image>() != null) {
+                    Debug.Log(slots);
+                    Debug.Log(potion);
+                    slots[i].transform.GetChild(0).GetComponent<Image>().enabled = true;
+                    slots[i].transform.GetChild(0).GetComponent<Image>().sprite = potion[i].GetItem().itemIcon;
+                    
+                }
+                if (slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>() != null) {
+                    slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = potion[i].GetQuantity() + "";
+                }
                 if (slots[i].GetComponent<ItemBox>() != null) {
                     slots[i].GetComponent<ItemBox>().SetItem(potion[i].GetItem());
                 }
             }
-            catch
+            else 
             {
-                slots[i].transform.GetChild(0).GetComponent<Image>().sprite = null;
-                slots[i].transform.GetChild(0).GetComponent<Image>().enabled = false;
-                slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "";
-                slots[i].GetComponent<ItemBox>().SetItem(null);
+                if (slots[i].transform.GetChild(0).GetComponent<Image>() != null) {
+                    slots[i].transform.GetChild(0).GetComponent<Image>().sprite = null;
+                    slots[i].transform.GetChild(0).GetComponent<Image>().enabled = false;
+                }
+                if (slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>() != null) {
+                    slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "";
+                }
+                if (slots[i].GetComponent<ItemBox>() != null) {
+                    slots[i].GetComponent<ItemBox>().SetItem(null);
+                }
             }
         }
     }
@@ -141,9 +164,54 @@ public class BrewingInventoryManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    public void AddItem(ItemClass item,int quantity)
+    public void AddItem(ItemClass item, int quantity)
     {
         SlotClass slot = ContainItem(item);
+        int tempQuantity = 0;
+        int index = -1;
+        if (item is HerbClass) {
+            index = ContainHerbReturnIndex((HerbClass) item);
+            if (index != -1 && tempItems[index].GetQuantity() > herb[index].GetQuantity()) tempQuantity = quantity;
+        }
+        
+        if(slot != null)
+        {
+            slot.AddQuantity(quantity);
+        }
+        else
+        {
+            if (item is HerbClass) {
+                for(int i=0; i < herb.Length; i++)
+                {
+                    if(herb[i].GetItem() == null)
+                    {
+                        herb[i].AddItem(item, quantity);
+                        break;
+                    }
+                }
+            } else if (item is CurePotionClass) {
+                for(int i=0; i < potion.Length; i++)
+                {
+                    if(potion[i].GetItem() == null)
+                    {
+                        potion[i].AddItem(item, quantity);
+                        break;
+                    }
+                }
+            }
+        }
+        if (item is HerbClass) {
+            if (tempQuantity == 0) {
+                CopyInventory(herb, ref tempItems);
+            }
+            tempItems[index].AddQuantity(tempQuantity);
+        }
+        RefreshUI();
+    }
+    public void AddItemWhenMoving(ItemClass item, int quantity)
+    {
+        SlotClass slot = ContainItem(item);
+        
         if(slot != null)
         {
             slot.AddQuantity(quantity);
@@ -172,6 +240,7 @@ public class BrewingInventoryManager : MonoBehaviour
         }
         RefreshUI();
     }
+    
     public SlotClass ContainItem(ItemClass item)
     {
         if (item is HerbClass) {
@@ -197,6 +266,18 @@ public class BrewingInventoryManager : MonoBehaviour
         return null;
     }
 
+    int ContainHerbReturnIndex(HerbClass h) {
+        for (int i = 0; i < herb.Length; i++)
+        {
+            if(herb[i] != null && herb[i].GetItem() == h)
+            {
+                return i;
+                
+            }
+        }
+        return -1;
+    }
+
     private SlotClass GetCloseSlot()
     {
         for(int i = 0; i < slots.Length; i++)
@@ -216,7 +297,7 @@ public class BrewingInventoryManager : MonoBehaviour
         if(ingredientShape != null) {
             if(!ingredientShape.GetComponent<BlockGroup>().IsPlacable()) {
                 Destroy(ingredientShape);
-                AddItem(movingSlot.GetItem(), movingSlot.GetQuantity());
+                AddItemWhenMoving(movingSlot.GetItem(), movingSlot.GetQuantity());
                 RefreshUI();
             }
             isMoving = false;

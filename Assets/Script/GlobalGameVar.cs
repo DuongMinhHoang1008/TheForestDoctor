@@ -51,6 +51,8 @@ public class GlobalGameVar
     public Dictionary<string, CurePotionClass> curePotionDic {get; private set;}
     public Dictionary<Upgrade, int> upgradeDic {get; private set;}
     public Dictionary<Upgrade, int> maxUpgradeDic {get; private set;}
+    public int playerLevel {get; private set;} = 1;
+    public int highscore;
     private GlobalGameVar() {}
     public static GlobalGameVar Instance() {
         if (instance == null) {
@@ -96,14 +98,18 @@ public class GlobalGameVar
     }
     public void ChangeMoney(int amount) {
         if (amount > money) {
-            money += (amount - money) * (int) System.Math.Pow(1.2f, upgradeDic[Upgrade.Money]);
+            int value = (int) ((amount - money) * System.Math.Pow(1.2f, upgradeDic[Upgrade.Money]));
+            GameManager.instance.MoreScore(value);
+            money += value;
         } else {
             money = amount;
         }
+        MusicController.instance.PlaySound(2);
     }
     public void UpgradeOne(Upgrade upgrade) {
         if (upgradeDic[upgrade] < maxUpgradeDic[upgrade]) {
             upgradeDic[upgrade]++;
         }
+        playerLevel++;
     }
 }

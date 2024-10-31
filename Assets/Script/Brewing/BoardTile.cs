@@ -76,7 +76,7 @@ public class BoardTile : MonoBehaviour
                 GetComponent<SpriteRenderer>().color = new Color(color.r, color.g, color.b, 0.8f);
             }
         } else if (element == Element.None){
-            GetComponent<SpriteRenderer>().color = new Color(color.r, color.g, color.b, 65f/255f);
+            GetComponent<SpriteRenderer>().color = new Color(color.r, color.g, color.b, 140f/255f);
         } else {
             GetComponent<SpriteRenderer>().color = new Color(color.r, color.g, color.b, 1);
         }

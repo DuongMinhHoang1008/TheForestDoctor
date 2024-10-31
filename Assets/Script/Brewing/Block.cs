@@ -47,7 +47,7 @@ public class Block : MonoBehaviour
                 && Math.Abs(globalPos.y - globalOtherPos.y) < GlobalGameVar.Instance().blockWidth / 2
                 && boardTile.CanBePlacedOn(element)) {
                     placable = true;
-                    boardTile.ChangeColor(Color.cyan);
+                    boardTile.ChangeColor(Color.gray);
                 } else {
                     placable = false;
                     if (boardTile.element == Element.None) {

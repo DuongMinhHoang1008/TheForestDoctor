@@ -7,11 +7,12 @@ using UnityEngine.UI;
 
 public class Shop : MonoBehaviour
 {
-    [SerializeField] public int maxNumber = 6;
+    public int maxNumber {get; private set;} = 5;
     [SerializeField] TextMeshProUGUI showNumber;
     [SerializeField] GameObject ingredients;
     [SerializeField] TextMeshProUGUI showSumMoney;
     [SerializeField] Slider shippingProgress;
+    [SerializeField] Animator shippingGuy;
     List<GameObject> ingredientsList;
     public int currentNumber {get; private set;} = 0;
     int currentMoney = 0;
@@ -21,7 +22,7 @@ public class Shop : MonoBehaviour
     float maxShipTime;
     float currentShipTime;
     public bool isShipping { get; private set; }
-
+    bool gobackward = false;
     private void Awake() {
         if (instance == null) {
             instance = this;
@@ -38,13 +39,13 @@ public class Shop : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        showNumber.text = currentNumber.ToString() + " / " + maxNumber.ToString();
+        showNumber.text = currentNumber.ToString() + "/" + maxNumber.ToString();
     }
 
     // Update is called once per frame
     void Update()
     {
-        showNumber.text = currentNumber.ToString() + " / " + maxNumber.ToString();
+        showNumber.text = currentNumber.ToString() + "/" + maxNumber.ToString();
         showSumMoney.text = currentMoney.ToString();
         if (isShipping) {
             currentShipTime += Time.deltaTime;
@@ -52,9 +53,22 @@ public class Shop : MonoBehaviour
                 shippingProgress.value = currentShipTime / (maxShipTime / 2);
             } else if (currentShipTime >= maxShipTime / 2 && currentShipTime < maxShipTime) {
                 shippingProgress.value = (maxShipTime - currentShipTime) / (maxShipTime / 2);
+                if (!gobackward) {
+                    gobackward = true;
+                    shippingGuy.SetTrigger("Back");
+                }
             } else if (currentShipTime >= maxShipTime) {
                 GetIngredients();
                 isShipping = false;
+                gobackward = false;
+                shippingGuy.SetTrigger("Stay");
+                GameManager.instance.NewNotification("Hàng đã về");
+                currentMoney = 0;
+                currentNumber = 0;
+                foreach (GameObject g in ingredientsList) {
+                    ingredientNum[g.GetComponent<GridSlot>().herb] = 0;
+                }
+                RefreshShop();
             }
         }
     }
@@ -63,7 +77,7 @@ public class Shop : MonoBehaviour
         currentNumber += num;
         if (currentNumber > maxNumber) currentNumber = maxNumber;
         if (currentNumber < 0) currentNumber = 0;
-        showNumber.text = currentNumber.ToString() + " / " + maxNumber.ToString();
+        showNumber.text = currentNumber.ToString() + "/" + maxNumber.ToString();
     }
     public void SummarizeNumber() {
         currentNumber = 0;
@@ -73,7 +87,7 @@ public class Shop : MonoBehaviour
             currentMoney += g.GetComponent<GridSlot>().herb.level * 10 * int.Parse(g.GetComponent<GridSlot>().inputField.text);
             ingredientNum[g.GetComponent<GridSlot>().herb] = int.Parse(g.GetComponent<GridSlot>().inputField.text);
         }
-        showNumber.text = currentNumber.ToString() + " / " + maxNumber.ToString();
+        showNumber.text = currentNumber.ToString() + "/" + maxNumber.ToString();
     }
     public bool IfCurrentNumberIsOk() {
         return currentNumber <= maxNumber && currentNumber >= 0;
@@ -99,7 +113,7 @@ public class Shop : MonoBehaviour
         currentMoney = 0;
     }
     public void RefreshShop() {
-        showNumber.text = currentNumber.ToString() + " / " + maxNumber.ToString();
+        showNumber.text = currentNumber.ToString() + "/" + maxNumber.ToString();
         foreach (GameObject g in ingredientsList) {
             g.GetComponent<GridSlot>().inputField.text = ingredientNum[g.GetComponent<GridSlot>().herb].ToString();
         }
@@ -111,6 +125,7 @@ public class Shop : MonoBehaviour
         maxShipTime = shipTime;
         isShipping = true;
         currentShipTime = 0;
+        shippingGuy.SetTrigger("Go");
     }
     
 }

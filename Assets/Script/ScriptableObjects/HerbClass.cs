@@ -24,7 +24,7 @@ public class HerbClass : ItemClass
                 info += "Vàng";
                 break;
             case Element.Orange:
-                info += "cam";
+                info += "Cam";
                 break;
             case Element.Red:
                 info += "Đỏ";

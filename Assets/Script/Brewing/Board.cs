@@ -42,6 +42,7 @@ public class Board : MonoBehaviour
                 elementNumber[tile.element] += tile.value;
             }
         }
+        MusicController.instance.PlaySound(5, 0.5f);
         BrewNewPotion();
         elementNumber[Element.Yellow] = 0;
         elementNumber[Element.Orange] = 0;
@@ -80,8 +81,10 @@ public class Board : MonoBehaviour
         
     }
     public void ClearBoard() {
-        foreach (BoardTile boardTile in boardTileArr) {
-            boardTile.ClearAll();
+        if (boardTileArr != null) {
+            foreach (BoardTile boardTile in boardTileArr) {
+                boardTile.ClearAll();
+            }
         }
     }
     public void SaveToDic(CurePotionClass data, string name)
