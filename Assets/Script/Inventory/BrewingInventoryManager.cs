@@ -171,7 +171,7 @@ public class BrewingInventoryManager : MonoBehaviour
         int index = -1;
         if (item is HerbClass) {
             index = ContainHerbReturnIndex((HerbClass) item);
-            if (index != -1 && tempItems[index].GetQuantity() > herb[index].GetQuantity()) tempQuantity = quantity;
+            if (index != -1 && CheckIfNeedUpdateTemp()) tempQuantity = quantity;
         }
         
         if(slot != null)
@@ -393,5 +393,11 @@ public class BrewingInventoryManager : MonoBehaviour
             RefreshUI();
         }
         return;
+    }
+    bool CheckIfNeedUpdateTemp() {
+        for (int i = 0; i < tempItems.Length; i++) {
+            if (tempItems[i].GetQuantity() > herb[i].GetQuantity()) return true;
+        }
+        return false;
     }
 }
